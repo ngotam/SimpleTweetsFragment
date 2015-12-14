@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:showIn="@layout/activity_compose"
+    tools:context="com.codepath.apps.mysimpletweets.ComposeActivity">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_gravity="center_horizontal"
+
+        android:id="@+id/linear1"
+        android:background="@android:color/holo_orange_light">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbarCompose"
+            android:minHeight="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:titleTextColor="@android:color/white"
+            android:background="#fa85ae7d">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/ivTweetIcon"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/tweets_icon"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Compose Tweet"
+                android:id="@+id/tvTitle"
+                android:layout_marginLeft="10dp"
+                android:textSize="15dp"
+                android:textColor="#101238" />
+
+        </android.support.v7.widget.Toolbar>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/linear2"
+        android:layout_below="@+id/linear1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:onClick="onCancel"
+            android:id="@+id/btnCancel" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tweet"
+            android:onClick="onTweet"
+            android:id="@+id/btnTweet"
+            android:layout_marginLeft="180dp"
+            android:background="#249ac1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:id="@+id/linear3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/linear2">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/ivImage"
+            android:src="@drawable/profile_icon"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tammy Ngo"
+            android:id="@+id/tvUser" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/linear3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linear4">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Enter message here:"
+            android:id="@+id/tvInput" />
+
+        <EditText
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:id="@+id/etInput"
+            android:layout_marginLeft="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/tvInput"
+            android:text=""
+            android:background="@color/bright_foreground_inverse_material_light" />
+    </LinearLayout>
+
+</RelativeLayout>
