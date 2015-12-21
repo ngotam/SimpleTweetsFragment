@@ -265,3 +265,26 @@ You can log out by clearing the access token at any time through the client obje
 RestClient client = RestApplication.getRestClient();
 client.clearAccessToken();
 ```
+********************************
+**SimpleTweetsFragment** is an android app that allows to sign in to Twitter and display on list of user name, body and profile image.
+User can select any user and dislay user profile.
+
+Submitted by: **Tammy Ngo**
+
+Time spent: **8** hours spent in total
+
+## User Stories
+
+The following **required** functionality is completed:
+
+* [x] User can **switch between Home timeline and Mentions** 
+* [x] User can **view home timeline tweets and latest mention of username** 
+* [x] User can **navigate to view our own profile by clicking on icon image of user on toolbar**. User can view profile picture, tagline and number of followers and following 
+* [x] User can **navigate to view other profile by clicking on any profile image on list**. User can view profile picture, tagline and number of followers and following of clicked user
+
+
+## Video Walkthrough 
+There is image for walk through: SimpleTweetExt.gif
+
+
+
