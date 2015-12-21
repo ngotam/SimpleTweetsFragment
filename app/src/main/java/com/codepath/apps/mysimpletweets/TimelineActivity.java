@@ -6,16 +6,30 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.codepath.apps.mysimpletweets.fragments.HomeTimelineFragment;
+import com.codepath.apps.mysimpletweets.fragments.MentionsTimelineFragment;
+import com.codepath.apps.mysimpletweets.fragments.TweetsListFragment;
+import com.codepath.apps.mysimpletweets.fragments.UserTimelineFragment;
 import com.codepath.apps.mysimpletweets.models.Tweet;
 import com.codepath.apps.mysimpletweets.models.User;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -28,13 +42,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity implements HomeTimelineFragment.OnItemSelectedListener{
 
-    private TwitterClient client;
-    private ArrayList<Tweet> tweets;
-    private TweetsArrayAdapter aTweets;
-    private ListView lvTweets;
-
+ //   HomeTimelineFragment homeTimelineFragment;
+ //   SmartFragmentStatePagerAdapter adapterViewpager;
+    LayoutInflater mLayoutInflater;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,46 +54,48 @@ public class TimelineActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        // get viewpager
+        ViewPager vpPager = (ViewPager)findViewById(R.id.viewpager);
+        // set view adatper for viewpager
+        TweetsPagerAdapter pagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager());
+        vpPager.setAdapter(pagerAdapter);
 
-        lvTweets = (ListView)findViewById(R.id.lvTweets);
-        // create array of data source
-        tweets = new ArrayList<>();
-        //construct adapter from data source
-        aTweets = new TweetsArrayAdapter(this, tweets);
-        //connect adapter to listview
-        lvTweets.setAdapter(aTweets);
-        client = TwitterApplication.getRestClient(); // singleton client
-        populateTimeline();
+        // find the sliding tabstrip
+        PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        // attached tabstrip to viewpager
+        tabStrip.setViewPager(vpPager);
 
     }
-    // send api request to get Timeline json
-    // Fill the listview by creating twitter object from json
-    private void populateTimeline(){
 
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-        // on success
+    @Override
+    public void onItemSelected(int position, User user) {
 
-           @Override
-           public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-            //   Log.d("DEBUG", json.toString());
-               // load model data in listview
-               aTweets.addAll(Tweet.fromJSONArray(json));
-           }
+        Log.d("position select = ", Integer.toString(position));
+        Intent i = new Intent(TimelineActivity.this, UserProfileActivity.class);
+        String screenName = user.getScreenName();
+        String tag = user.getTagline();
+        String name = user.getName();
+        String image = user.getProfileImageUrl();
+        int followers = user.getFollowersCount();
+        int following = user.getFriendsCount();
 
-           @Override
-           public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-               Log.d("DEBUG", errorResponse.toString());
-           }
-                               }
-        );
+        i.putExtra("screen_name", screenName);
+        i.putExtra("tagLine", tag);
+        i.putExtra("full_name", name);
+        i.putExtra("imageUrl", image);
+        i.putExtra("followers", followers);
+        i.putExtra("following", following);
+
+        startActivity(i);
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_timeline, menu);
-        MenuItem composeItem = menu.findItem(R.id.action_compose);
+
         return true;
     }
 
@@ -89,46 +103,48 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        if ( id == R.id.action_compose ) {
-            Intent composeInfo = new Intent(TimelineActivity.this, ComposeActivity.class);
-            startActivityForResult(composeInfo, 1);
-            return true;
+        if ( id == R.id.miProfile ) {
+            Intent i = new Intent(this, ProfileActivity.class);
+            startActivity(i);
         }
+
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
 
-                Bundle bundleData = data.getExtras();
-                String editStr = bundleData.getString("ListView.data");
+  // return order of fragments in view pager
+    public class TweetsPagerAdapter extends FragmentPagerAdapter {
 
-                String usrName = "tammyngo2617";
-                String fullName = "Tammy Ngo";
+        private String tabTitles[] = {"Home", "Mentions"};
 
-                String imageUrl = "https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678130-profile-alt-4-128.png";
-                Tweet tweet = new Tweet();
-                tweet.setBody(editStr);
+        // adatper get manager to insert or remove fragment from activity
+        public TweetsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
-                User user = new User();
-                user.setName(fullName);
-                user.setScreenName(usrName);
-                user.setProfileImageUrl(imageUrl);
-                tweet.setUser(user);
-
-
-                tweets.add(tweet);
-                //insert image using picasso
-                ImageView imgUser = (ImageView)findViewById(R.id.ivProfileImage);
-                Picasso.with(this).load(imageUrl).into(imgUser);
-                aTweets.notifyDataSetChanged();
-
+        @Override
+        public Fragment getItem(int position) {
+            if ( position == 0 ){
+                return new HomeTimelineFragment();
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                Log.d("Cancel", "onActivityResult() with resultCode_cancel = "+ resultCode);
+            else if ( position == 1 ){
+                return new MentionsTimelineFragment();
+            }
+            else {
+                return null;
             }
         }
-    }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        @Override
+        public int getCount() {
+            return tabTitles.length;
+        }
+
+
+  }
 }
